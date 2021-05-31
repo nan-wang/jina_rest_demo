@@ -1,6 +1,10 @@
 # jina_rest_demo
 a demo for jina rest api
 
+- [Start Jina Flow](#start-jina-flow)
+- [Send Request](#send-requests)
+- [Visualize Response](#visualize-response)
+
 ## Start Jina Flow
 
 ```bash
@@ -133,7 +137,7 @@ You will see the following response in JSON format. Please refer to [https://api
 }
 ```
 
-## Plot Response
+## Visualize Response
 
 In the response, we want to visualize the following fields
 
