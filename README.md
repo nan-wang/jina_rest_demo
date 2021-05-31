@@ -8,6 +8,8 @@ a demo for jina rest api
 ## Start Jina Flow
 
 ```bash
+cd rest_api_example
+pip install -r requirements.txt
 python app.py
 ```
 
