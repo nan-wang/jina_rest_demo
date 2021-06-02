@@ -3,7 +3,8 @@ from jina.types.score import NamedScore
 import time
 
 NUM_CHUNKS = 2
-NUM_MATCHES = 3
+NUM_DOC_MATCHES = 3
+NUM_CHUNK_MATCHES = 4
 
 
 class ChunksSegmenter(Executor):
@@ -14,7 +15,20 @@ class ChunksSegmenter(Executor):
             doc.chunks = [Document(text=f'chunk_{i}') for i in range(NUM_CHUNKS)]
 
 
-class MatchesAppender(Executor):
+class ChunkMatcher(Executor):
+    @requests(on='/search')
+    def search(self, docs, **kwargs):
+        time.sleep(1)
+        for doc in docs:
+            for chunk in doc.chunks:
+                chunk.matches = [
+                    Document(
+                        text=f'match_{i}',
+                        score=NamedScore(value=0.1*i, op_name='chunk_matcher', description='score for chunk')
+                ) for i in range(NUM_CHUNK_MATCHES)]
+
+
+class DocMatcher(Executor):
     @requests(on='/search')
     def search(self, docs, **kwargs):
         time.sleep(1)
@@ -22,14 +36,20 @@ class MatchesAppender(Executor):
             doc.matches = [
                 Document(
                     text=f'match_{i}',
-                    score=NamedScore(value=0.1*i, op_name='ranker', description='score from ranker')
-            ) for i in range(NUM_MATCHES)]
+                    score=NamedScore(
+                        value=i,
+                        op_name='doc_matcher',
+                        description='score for doc',
+                        operands=[m.score for chunk in doc.chunks for m in chunk.matches])
+                ) for i in range(NUM_DOC_MATCHES)
+            ]
 
 
 def main():
     f = (Flow()
          .add(uses=ChunksSegmenter)
-         .add(uses=MatchesAppender))
+         .add(uses=ChunkMatcher)
+         .add(uses=DocMatcher))
     with f:
         f.use_rest_gateway(port=45678)
         f.block()
