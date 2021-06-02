@@ -1,4 +1,4 @@
-# jina_rest_demo
+# `jina_rest_demo`
 a demo for jina rest api
 
 - [Start Jina Flow](#start-jina-flow)
