@@ -1,4 +1,5 @@
 from jina import Flow, Executor, Document, requests
+from jina.types.score import NamedScore
 import time
 
 NUM_CHUNKS = 2
@@ -18,7 +19,11 @@ class MatchesAppender(Executor):
     def search(self, docs, **kwargs):
         time.sleep(1)
         for doc in docs:
-            doc.matches = [Document(text=f'match_{i}') for i in range(NUM_MATCHES)]
+            doc.matches = [
+                Document(
+                    text=f'match_{i}',
+                    score=NamedScore(value=0.1*i, op_name='ranker', description='score from ranker')
+            ) for i in range(NUM_MATCHES)]
 
 
 def main():
