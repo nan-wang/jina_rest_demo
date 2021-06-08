@@ -1,6 +1,7 @@
 from jina import Flow, Executor, Document, requests
 from jina.types.score import NamedScore
 import time
+import sys
 
 NUM_CHUNKS = 2
 NUM_DOC_MATCHES = 3
@@ -8,11 +9,26 @@ NUM_CHUNK_MATCHES = 4
 
 
 class ImageLoader(Executor):
+    def __init__(self, mode='text', **kwargs):
+        super().__init__(**kwargs)
+        self.mode = mode
+        if self.mode == 'text':
+            self._text = 'request doc'
+        elif self.mode == 'image':
+            self._uri = 'data/cat.jpeg'
+        elif self.mode == 'audio':
+            self._uri = 'data/cat.wav'
+        elif self.mode == 'video':
+            self._uri = 'data/cat.mp4'
+
     @requests(on='/search')
     def load(self, docs, **kwargs):
         for doc in docs:
-            doc.uri = 'data/cat.jpeg'
-            doc.convert_uri_to_datauri()
+            if self.mode == 'text':
+                doc.text = self._text
+            elif self.mode in ('image', 'audio', 'video'):
+                doc.uri = self._uri
+                # doc.convert_uri_to_datauri()
 
 
 class ChunksSegmenter(Executor):
@@ -54,9 +70,9 @@ class DocMatcher(Executor):
             ]
 
 
-def main():
+def main(mode):
     f = (Flow()
-         .add(uses=ImageLoader)
+         .add(uses={'jtype': 'ImageLoader', 'with': {'mode': mode}})
          .add(uses=ChunksSegmenter)
          .add(uses=ChunkMatcher)
          .add(uses=DocMatcher))
@@ -66,4 +82,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    mode = 'text' if len(sys.argv) < 2 else sys.argv[1]
+    main(mode)
