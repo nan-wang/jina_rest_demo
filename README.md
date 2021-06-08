@@ -5,6 +5,16 @@ a demo for jina rest api
 - [Send Request](#send-requests)
 - [Visualize Response](#visualize-response)
 
+## Goals for Debug Tooling
+- [x] [send text data](#send-text-data)
+- [ ] [send multimedia data](#send-multimedia-data)
+- [x] [`routes`](routes)
+- [x] [`docs[i]`](docsi)
+- [x] [`docs[i].chunks`](#`docsichunks`)
+- [x] [`docs[i].matches`](#docsimatches)
+- [ ] [`docs[i].uri`](#docsiuri)
+
+
 ## Start Jina Flow
 
 ```bash
@@ -40,8 +50,10 @@ Note that the jina Flow is starting successfully and listening to `0.0.0.0:45678
 
 ## Send Requests
 
+
 You can use `curl` to send requests to the REST APIs
 
+### Send text data
 ```shell
 curl --request POST -d '{"data": [{"text": "hello world"}], "parameters": {"mode": "text"}}' -H 'Content-Type: application/json' http://localhost:45678/search
 ```
@@ -159,6 +171,7 @@ You will see the following response in JSON format. Please refer to [https://api
 
 In the response, we want to visualize the following fields
 
+
 ### `routes`
 
 In the routes, you will see the route information of all the Pods that has processed the request. 
@@ -274,7 +287,7 @@ Each Document in the `docs` has `chunks`, which is a list of `Document` again.
 
 
 
-### `doc[i].matches`
+### `docs[i].matches`
 
 Each Document in the `docs` has `matches`, which is a list of `Document` again.
 
