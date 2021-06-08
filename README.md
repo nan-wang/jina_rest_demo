@@ -43,8 +43,24 @@ Note that the jina Flow is starting successfully and listening to `0.0.0.0:45678
 You can use `curl` to send requests to the REST APIs
 
 ```shell
-curl --request POST -d '{"data": [{"text": "hello world"}]}' -H 'Content-Type: application/json' http://localhost:45678/search
+curl --request POST -d '{"data": [{"text": "hello world"}], "parameters": {"mode": "text"}}' -H 'Content-Type: application/json' http://localhost:45678/search
 ```
+
+Change the `parameters.mode` can change the uri in the response.
+
+| `parameter.mode` | `response.data.docs[0].uri` | `response.data.docs[0].mime_type` |
+| --- | --- | --- |
+| `"parameters": {"mode": "text"}` | `N/A` | `"text/plain` |
+| `"parameters": {"mode": "image"}` | `data:image/jpeg;charset=utf-8,%FF...` | `data:image/jpeg` |
+| `"parameters": {"mode": "audio"}` | `data:audio/mpeg;charset=utf-8,ID3%...` | `audio/mpeg`
+| `"parameters": {"mode": "video"}` | `data:video/mp4;charset=utf-8,ABC%...` | `video/mp4` |
+
+
+### Send multimedia data
+
+**Use Case**: As a jina developer, I would like to upload multimedia data, including image(.jpeg, .png)/audio(.wav, .mp3)/video(.mp4), and send it via the debug tool as a data uri in the format of `base64`.
+
+To send multimedia data, you need to change `data` parameter to `{"data": [{"uri": "data:image/jpeg;charset=utf-8,%FF..."}]}` where `uri` is the data uri in the format of `base64`
 
 You will see the following response in JSON format. Please refer to [https://api.jina.ai/rest/](https://api.jina.ai/rest/) for more details about the RESTful API, 
 
@@ -315,3 +331,9 @@ Each Document in the `docs` has `matches`, which is a list of `Document` again.
   ...
 }
 ```
+
+### `docs[i].uri`
+
+**USE CASE**: As a jina developer, I would like to visualize/play the uri if it is a data uri in the format of `base64`, in particular when the uri is an image(.jpeg, .png)/audio(.wav, .mp3)/video(.mp4).
+
+## 
