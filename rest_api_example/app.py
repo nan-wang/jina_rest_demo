@@ -1,47 +1,38 @@
 from jina import Flow, Executor, Document, requests
 from jina.types.score import NamedScore
 import time
-import sys
 
 NUM_CHUNKS = 2
 NUM_DOC_MATCHES = 3
 NUM_CHUNK_MATCHES = 4
 
 
-class ImageLoader(Executor):
-    def __init__(self, mode='text', **kwargs):
-        super().__init__(**kwargs)
-        self.mode = mode
-        if self.mode == 'text':
-            self._text = 'request doc'
-        elif self.mode == 'image':
-            self._uri = 'data/cat.jpeg'
-        elif self.mode == 'audio':
-            self._uri = 'data/cat.wav'
-        elif self.mode == 'video':
-            self._uri = 'data/cat.mp4'
-
-    @requests(on='/search')
-    def load(self, docs, **kwargs):
+class DataLoader(Executor):
+    @requests
+    def search(self, docs, parameters, **kwargs):
         for doc in docs:
-            if self.mode == 'text':
-                doc.text = self._text
-            elif self.mode in ('image', 'audio', 'video'):
-                doc.uri = self._uri
-                # doc.convert_uri_to_datauri()
+            if parameters['mode'] == 'text':
+                doc.text = 'what a lovely cat'
+            elif parameters['mode'] == 'image':
+                doc.uri = 'data/cat.jpeg'
+            elif parameters['mode'] == 'audio':
+                doc.uri = 'data/jina.mp3'
+            elif parameters['mode'] == 'video':
+                doc.uri = 'data/jina.mp4'
+            if doc.uri:
+                doc.convert_uri_to_datauri()
 
 
 class ChunksSegmenter(Executor):
-    @requests(on='/search')
+    @requests
     def search(self, docs, **kwargs):
-        time.sleep(5)
+        time.sleep(3)
         for doc in docs:
             doc.chunks = [Document(text=f'chunk_{i}') for i in range(NUM_CHUNKS)]
 
 
-
 class ChunkMatcher(Executor):
-    @requests(on='/search')
+    @requests
     def search(self, docs, **kwargs):
         time.sleep(1)
         for doc in docs:
@@ -54,7 +45,7 @@ class ChunkMatcher(Executor):
 
 
 class DocMatcher(Executor):
-    @requests(on='/search')
+    @requests
     def search(self, docs, **kwargs):
         time.sleep(1)
         for doc in docs:
@@ -70,9 +61,9 @@ class DocMatcher(Executor):
             ]
 
 
-def main(mode):
+def main():
     f = (Flow()
-         .add(uses={'jtype': 'ImageLoader', 'with': {'mode': mode}})
+         .add(uses=DataLoader)
          .add(uses=ChunksSegmenter)
          .add(uses=ChunkMatcher)
          .add(uses=DocMatcher))
@@ -82,5 +73,4 @@ def main(mode):
 
 
 if __name__ == '__main__':
-    mode = 'text' if len(sys.argv) < 2 else sys.argv[1]
-    main(mode)
+    main()
