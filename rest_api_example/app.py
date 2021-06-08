@@ -13,7 +13,9 @@ class DataLoader(Executor):
         for doc in docs:
             if parameters['mode'] == 'text':
                 doc.text = 'what a lovely cat'
-            elif parameters['mode'] == 'image':
+            if doc.uri:
+                continue
+            if parameters['mode'] == 'image':
                 doc.uri = 'data/cat.jpeg'
             elif parameters['mode'] == 'audio':
                 doc.uri = 'data/jina.mp3'
