@@ -8,11 +8,11 @@ a demo for jina rest api
 ## Goals for Debug Tooling
 - [x] [send text data](#send-text-data)
 - [ ] [send multimedia data](#send-multimedia-data)
-- [x] [`routes`](routes)
-- [x] [`docs[i]`](docsi)
-- [x] [`docs[i].chunks`](#`docsichunks`)
-- [x] [`docs[i].matches`](#docsimatches)
-- [ ] [`docs[i].uri`](#docsiuri)
+- [x] [visualize `routes`](#routes)
+- [x] [visualize `docs[i]`](#docsi)
+- [x] [visualize `docs[i].chunks`](#docsichunks)
+- [x] [visualize `docs[i].matches`](#docsimatches)
+- [ ] [visualize `docs[i].uri`](#docsiuri)
 
 
 ## Start Jina Flow
