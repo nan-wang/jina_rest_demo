@@ -9,17 +9,18 @@ NUM_CHUNK_MATCHES = 4
 
 class DataLoader(Executor):
     @requests
-    def search(self, docs, parameters, **kwargs):
+    def search(self, docs, parameters=None, **kwargs):
         for doc in docs:
-            if parameters['mode'] == 'text':
+            mode = parameters.get('mode', None)
+            if mode == 'text':
                 doc.text = 'what a lovely cat'
             if doc.uri:
                 continue
-            if parameters['mode'] == 'image':
+            if mode == 'image':
                 doc.uri = 'data/cat.jpeg'
-            elif parameters['mode'] == 'audio':
+            elif mode == 'audio':
                 doc.uri = 'data/jina.mp3'
-            elif parameters['mode'] == 'video':
+            elif mode == 'video':
                 doc.uri = 'data/jina.mp4'
             if doc.uri:
                 doc.convert_uri_to_datauri()
