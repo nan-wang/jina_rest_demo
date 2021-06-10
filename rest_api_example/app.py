@@ -25,6 +25,11 @@ class DataLoader(Executor):
             if doc.uri:
                 doc.convert_uri_to_datauri()
 
+    @requests(on='/my_customized_api')
+    def foo(self, docs, **kwargs):
+        for doc in docs:
+            doc.text = 'hello from my api'
+
 
 class ChunksSegmenter(Executor):
     @requests
