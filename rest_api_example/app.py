@@ -65,11 +65,7 @@ class DocMatcher(Executor):
 
 
 def main():
-    f = (Flow()
-         .add(uses=DataLoader)
-         .add(uses=ChunksSegmenter)
-         .add(uses=ChunkMatcher)
-         .add(uses=DocMatcher))
+    f = (Flow().add())
     with f:
         f.use_rest_gateway(port=45678)
         f.block()
