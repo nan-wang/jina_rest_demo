@@ -8,7 +8,7 @@ NUM_CHUNK_MATCHES = 4
 
 
 class DataLoader(Executor):
-    @requests
+    @requests(on='/search')
     def search(self, docs, parameters=None, **kwargs):
         for doc in docs:
             mode = parameters.get('mode', None)
@@ -30,9 +30,14 @@ class DataLoader(Executor):
         for doc in docs:
             doc.text = 'hello from my api'
 
+    @requests(on='/multifields')
+    def multifields_func(self, docs, **kwargs):
+        for doc in docs:
+            print(f'received multi-fields doc: {doc}')
+
 
 class ChunksSegmenter(Executor):
-    @requests
+    @requests(on='/search')
     def search(self, docs, **kwargs):
         time.sleep(3)
         for doc in docs:
@@ -40,7 +45,7 @@ class ChunksSegmenter(Executor):
 
 
 class ChunkMatcher(Executor):
-    @requests
+    @requests(on='/search')
     def search(self, docs, **kwargs):
         time.sleep(1)
         for doc in docs:
@@ -53,7 +58,7 @@ class ChunkMatcher(Executor):
 
 
 class DocMatcher(Executor):
-    @requests
+    @requests(on='/search')
     def search(self, docs, **kwargs):
         time.sleep(1)
         for doc in docs:

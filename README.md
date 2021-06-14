@@ -7,12 +7,14 @@ a demo for jina rest api
 
 ## Goals for Debug Tooling
 - [x] [send text data](#send-text-data)
-- [ ] [send multimedia data](#send-multimedia-data)
+- [x] [send multimedia data](#send-multimedia-data)
+- [ ] [send data with multiple fields](#send-multifields-data)
+- [ ] send data with recursive structures (TBD)
 - [x] [visualize `routes`](#routes)
 - [x] [visualize `docs[i]`](#docsi)
 - [x] [visualize `docs[i].chunks`](#docsichunks)
 - [x] [visualize `docs[i].matches`](#docsimatches)
-- [ ] [visualize `docs[i].uri`](#docsiuri)
+- [x] [visualize `docs[i].uri`](#docsiuri)
 
 
 ## Start Jina Flow
@@ -166,6 +168,28 @@ You will see the following response in JSON format. Please refer to [https://api
   "status": {}
 }
 ```
+
+
+### Send multifields data
+
+The full specification of the flow RESTful APIs is defined at https://api.jina.ai/rest/#operation/post_post__endpoint__post. 
+
+**Use Case**: As a jina developer, I would like to specify the fields of `data` and `parameters`. Specifically, I would like to send the following fields via thee REST API,
+
+- `data.id`: `string`
+- `data.uri`: `string`
+- `data.text`: `string`
+- `data.mimeType`: `string`
+- `data.tags`: (via RAW inputs)
+- `data.modality`: `string`
+- `parameters`: (via RAW inputs)
+
+
+```shell
+curl --request POST -d '{"data": [{"text": "a multi-field doc", "modality": "customized_modality"}], "parameters": {"mode": "text"}}' -H 'Content-Type: application/json' http://localhost:45678/post/multifields
+```
+
+
 
 ## Visualize Response
 
