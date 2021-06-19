@@ -1,1 +1,1 @@
-jina[http]==2.0.0rc4
+jina[http]==2.0.0rc7

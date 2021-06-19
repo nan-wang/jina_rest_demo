@@ -53,8 +53,12 @@ class ChunkMatcher(Executor):
                 chunk.matches = [
                     Document(
                         text=f'match_{i}',
-                        score=NamedScore(value=0.1*i, op_name='chunk_matcher', description='score for chunk')
-                ) for i in range(NUM_CHUNK_MATCHES)]
+                        scores={
+                            f'chunk score': NamedScore(
+                                value=0.1*i,
+                                op_name='chunk_matcher',
+                                description='score for chunk')}
+                    ) for i in range(NUM_CHUNK_MATCHES)]
 
 
 class DocMatcher(Executor):
@@ -65,21 +69,27 @@ class DocMatcher(Executor):
             doc.matches = [
                 Document(
                     text=f'match_{i}',
-                    score=NamedScore(
-                        value=i,
-                        op_name='doc_matcher',
-                        description='score for doc',
-                        operands=[m.score for chunk in doc.chunks for m in chunk.matches])
+                    scores={
+                        f'doc score': NamedScore(
+                            value=i,
+                            op_name='doc_matcher',
+                            description='score for doc',
+                            operands=[s for chunk in doc.chunks for m in chunk.matches for s in m.scores.values()]),
+                        f'score': NamedScore(
+                            value=0.99999999,
+                            op_name='doc_matcher',
+                            description='final score for doc')
+                    }
                 ) for i in range(NUM_DOC_MATCHES)
             ]
 
 
 def main():
     f = (Flow()
-         .add(uses=DataLoader)
-         .add(uses=ChunksSegmenter)
-         .add(uses=ChunkMatcher)
-         .add(uses=DocMatcher))
+         .add(uses=DataLoader, name='loader')
+         .add(uses=ChunksSegmenter, name='segmenter', parallel=2)
+         .add(uses=ChunkMatcher, name='chunk_matcher')
+         .add(uses=DocMatcher, name='doc_matcher'))
     with f:
         f.use_rest_gateway(port=45678)
         f.block()
