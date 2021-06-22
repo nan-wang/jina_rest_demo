@@ -85,13 +85,13 @@ class DocMatcher(Executor):
 
 
 def main():
-    f = (Flow()
+    f = (Flow(protocol='http', port_expose=45678, cors=True)
          .add(uses=DataLoader, name='loader')
          .add(uses=ChunksSegmenter, name='segmenter', parallel=2)
          .add(uses=ChunkMatcher, name='chunk_matcher')
          .add(uses=DocMatcher, name='doc_matcher'))
     with f:
-        f.use_rest_gateway(port=45678)
+        # f.use_rest_gateway(port=45678)
         f.block()
 
 
